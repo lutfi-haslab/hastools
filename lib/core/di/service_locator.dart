@@ -4,6 +4,8 @@ import 'package:hastools/core/constants/api_constants.dart';
 import 'package:hastools/core/network/dio_client.dart';
 import 'package:hastools/features/todos/data/repositories/todo_repository_impl.dart';
 import 'package:hastools/features/todos/presentation/bloc/todo_bloc.dart';
+import 'package:hastools/features/tool/data/repositories/tool_repository_impl.dart';
+import 'package:hastools/features/tool/presentation/bloc/tool_bloc.dart';
 
 final getIt = GetIt.instance;
 
@@ -21,8 +23,13 @@ void setupServiceLocator() {
   getIt.registerLazySingleton(() => DioClient(getIt<Dio>()));
 
   // Repositories
-  getIt.registerLazySingleton(() => TodoRepository(dioClient: getIt<DioClient>()));
+  getIt.registerLazySingleton(
+      () => TodoRepository(dioClient: getIt<DioClient>()));
+  getIt.registerLazySingleton(() => ToolRepository());
 
   // BLoCs
   getIt.registerFactory(() => TodoBloc(repository: getIt<TodoRepository>()));
+  getIt.registerFactory(() => ToolBloc(
+        repository: getIt<ToolRepository>(),
+      ));
 }

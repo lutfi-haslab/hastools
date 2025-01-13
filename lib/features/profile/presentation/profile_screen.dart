@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hastools/core/constants/color.dart';
+import 'package:hastools/features/tool/presentation/bloc/tool_bloc.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -16,7 +18,8 @@ class ProfileScreen extends StatelessWidget {
             children: [
               const CircleAvatar(
                 radius: 32,
-                backgroundImage: AssetImage('assets/profile.jpg'),
+                backgroundImage: NetworkImage(
+                    'https://dummyimage.com/600x400/bdbdbd/ffffff.png'),
               ),
               const SizedBox(height: 24),
               const Text(
@@ -35,6 +38,8 @@ class ProfileScreen extends StatelessWidget {
               _buildSection('Details', _buildDetails()),
               const SizedBox(height: 32),
               _buildEditButton(),
+              const SizedBox(height: 32),
+              _buildResetButton(context),
             ],
           ),
         ),
@@ -171,6 +176,32 @@ class ProfileScreen extends StatelessWidget {
           color: AppColors.textPrimary,
           fontSize: 16,
           fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildResetButton(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        // Tambahkan logika untuk mereset penyimpanan di sini
+        context.read<ToolBloc>().add(ResetTools());
+      },
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: AppColors.secondary,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: const Text(
+          'Reset Storage',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: AppColors.textPrimary,
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
     );
