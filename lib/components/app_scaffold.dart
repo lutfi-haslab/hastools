@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hastools/core/constants/color.dart';
 import 'package:network_logger/network_logger.dart';
 
 class NetworkLoggerManager {
@@ -56,6 +57,10 @@ class AppScaffold extends StatelessWidget {
   final Widget? headerRight;
   final Color? backgroundColor;
   final bool resizeToAvoidBottomInset;
+  final bool withBottomNavigation;
+  // Add these new parameters
+  final int? currentIndex;
+  final Function(int)? onNavigate;
 
   const AppScaffold({
     super.key,
@@ -70,13 +75,15 @@ class AppScaffold extends StatelessWidget {
     this.headerRight,
     this.backgroundColor = const Color.fromARGB(255, 240, 239, 239),
     this.resizeToAvoidBottomInset = true,
+    this.withBottomNavigation = false,
+    this.currentIndex,
+    this.onNavigate,
   });
 
   @override
   Widget build(BuildContext context) {
     Widget content = child;
 
-    // Wrap with LoadMore if enabled
     if (enableLoadMore && onLoadMore != null) {
       content = NotificationListener<ScrollNotification>(
         onNotification: (ScrollNotification scrollInfo) {
@@ -89,7 +96,6 @@ class AppScaffold extends StatelessWidget {
       );
     }
 
-    // Wrap with RefreshIndicator if enabled
     if (enablePullRefresh && onRefresh != null) {
       content = RefreshIndicator(
         onRefresh: onRefresh!,
@@ -97,7 +103,6 @@ class AppScaffold extends StatelessWidget {
       );
     }
 
-    // Wrap the entire content with NetworkLoggerWrapper
     content = NetworkLoggerWrapper(child: content);
 
     return Scaffold(
@@ -107,6 +112,7 @@ class AppScaffold extends StatelessWidget {
           ? AppBar(
               title: Text(title!),
               backgroundColor: Colors.white,
+              scrolledUnderElevation: 0.0,
               leading: showBackButton
                   ? IconButton(
                       icon: const Icon(Icons.arrow_back),
@@ -123,30 +129,28 @@ class AppScaffold extends StatelessWidget {
             )
           : null,
       body: SafeArea(child: content),
+      bottomNavigationBar: withBottomNavigation
+          ? BottomNavigationBar(
+              currentIndex: currentIndex ?? 0,
+              selectedItemColor: AppColors.primary,
+              unselectedItemColor: AppColors.textSecondary,
+              items: const [
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.home),
+                  label: 'Home',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.book),
+                  label: 'Todos',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.person),
+                  label: 'Profile',
+                ),
+              ],
+              onTap: onNavigate,
+            )
+          : null,
     );
   }
 }
-
-// class NetworkLoggerWrapper extends StatefulWidget {
-//   final Widget child;
-
-//   const NetworkLoggerWrapper({super.key, required this.child});
-
-//   @override
-//   State<NetworkLoggerWrapper> createState() => _NetworkLoggerWrapperState();
-// }
-
-// class _NetworkLoggerWrapperState extends State<NetworkLoggerWrapper> {
-//   @override
-//   void initState() {
-//     super.initState();
-//     WidgetsBinding.instance.addPostFrameCallback((_) {
-//       NetworkLoggerOverlay.attachTo(context, draggable: true);
-//     });
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return widget.child;
-//   }
-// }

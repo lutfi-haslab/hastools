@@ -39,7 +39,7 @@ class TodoScreen extends StatelessWidget {
                           },
                         ),
                         onTap: () {
-                          context.go('/details');
+                          context.push('/todo/details');
                         },
                       );
                     },

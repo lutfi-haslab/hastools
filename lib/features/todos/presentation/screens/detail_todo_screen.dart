@@ -9,6 +9,7 @@ class DetailTodoScreen extends StatelessWidget {
     return AppScaffold(
       title: 'My Page',
       enablePullRefresh: true,
+      withBottomNavigation: false,
       enableLoadMore: true,
       onRefresh: () async {
         // Handle refresh logic
