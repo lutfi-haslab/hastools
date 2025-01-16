@@ -1,38 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hastools/components/app_scaffold.dart';
+import 'package:hastools/core/constants/color.dart';
 
 class CurrencyConverterScreen extends StatefulWidget {
   const CurrencyConverterScreen({super.key});
 
   @override
-  State<CurrencyConverterScreen> createState() =>
-      _CurrencyConverterScreenState();
+  State<CurrencyConverterScreen> createState() => _CurrencyConverterScreenState();
 }
 
 class _CurrencyConverterScreenState extends State<CurrencyConverterScreen> {
   final TextEditingController _amountController = TextEditingController();
-  String _fromCurrency = 'USD'; // Default from currency
-  String _toCurrency = 'IDR'; // Default to currency (Indonesian Rupiah)
+  String _fromCurrency = 'USD';
+  String _toCurrency = 'IDR';
   double _result = 0.0;
 
-  // Sample exchange rates (in real app, these would come from an API)
   final Map<String, double> _rates = {
     'USD': 1.0,
-    'IDR': 15750.0, // Added IDR rate (approximate as of 2024)
+    'IDR': 15750.0,
     'EUR': 0.85,
     'GBP': 0.73,
     'JPY': 110.0,
     'AUD': 1.35,
   };
 
-  final List<String> _currencies = [
-    'USD',
-    'IDR',
-    'EUR',
-    'GBP',
-    'JPY',
-    'AUD'
-  ]; // Added IDR to the list
+  final List<String> _currencies = ['USD', 'IDR', 'EUR', 'GBP', 'JPY', 'AUD'];
 
   void _convertCurrency() {
     if (_amountController.text.isEmpty) return;
@@ -45,9 +38,8 @@ class _CurrencyConverterScreenState extends State<CurrencyConverterScreen> {
         _result = result;
       });
     } catch (e) {
-      // Handle invalid input
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Invalid input. Please enter a valid number.")),
+        const SnackBar(content: Text("Invalid input. Please enter a valid number.")),
       );
     }
   }
@@ -64,12 +56,11 @@ class _CurrencyConverterScreenState extends State<CurrencyConverterScreen> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        FocusScope.of(context).unfocus(); // Dismiss keyboard when tapping outside
-      },
+      onTap: () => FocusScope.of(context).unfocus(),
       child: AppScaffold(
         title: "Currency Converter",
-        backgroundColor: const Color(0xFF1E1E1E),
+        onBack: () => context.go("/tools"),
+        backgroundColor: AppColors.background,
         child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(20.0),
@@ -77,36 +68,54 @@ class _CurrencyConverterScreenState extends State<CurrencyConverterScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const SizedBox(height: 20),
-                const Text(
+                Text(
                   'Currency\nConverter',
                   style: TextStyle(
                     fontSize: 40,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    color: AppColors.textPrimary,
                   ),
                 ),
                 const SizedBox(height: 40),
                 Container(
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF2C2C2C),
+                    color: AppColors.white,
                     borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.primary.withOpacity(0.1),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
                   ),
                   child: Column(
                     children: [
                       TextField(
                         controller: _amountController,
-                        style: const TextStyle(color: Colors.white, fontSize: 24),
-                        keyboardType: const TextInputType.numberWithOptions(
-                            decimal: true),
+                        style: TextStyle(
+                          color: AppColors.textPrimary,
+                          fontSize: 24,
+                        ),
+                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
                         decoration: InputDecoration(
                           hintText: 'Enter amount',
-                          hintStyle: const TextStyle(color: Colors.grey),
+                          hintStyle: TextStyle(color: AppColors.textSecondary),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(15),
+                            borderSide: BorderSide(color: AppColors.secondary),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(15),
+                            borderSide: BorderSide(color: AppColors.secondary),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(15),
+                            borderSide: BorderSide(color: AppColors.primary, width: 2),
                           ),
                           filled: true,
-                          fillColor: const Color(0xFF3D3D3D),
+                          fillColor: AppColors.background,
                         ),
                       ),
                       const SizedBox(height: 20),
@@ -119,9 +128,17 @@ class _CurrencyConverterScreenState extends State<CurrencyConverterScreen> {
                           ),
                           GestureDetector(
                             onTap: _swapCurrencies,
-                            child: const Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 20),
-                              child: Icon(Icons.swap_horiz, color: Colors.white),
+                            child: Container(
+                              padding: const EdgeInsets.all(12),
+                              margin: const EdgeInsets.symmetric(horizontal: 16),
+                              decoration: BoxDecoration(
+                                color: AppColors.primary,
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(
+                                Icons.swap_horiz,
+                                color: AppColors.white,
+                              ),
                             ),
                           ),
                           Expanded(
@@ -139,18 +156,19 @@ class _CurrencyConverterScreenState extends State<CurrencyConverterScreen> {
                   child: ElevatedButton(
                     onPressed: _convertCurrency,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
+                      backgroundColor: AppColors.primary,
+                      foregroundColor: AppColors.white,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15),
                       ),
-                    ),
-                    child: const Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-                      child: Text(
-                        'Convert',
-                        style: TextStyle(fontSize: 20),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 40,
+                        vertical: 15,
                       ),
+                    ),
+                    child: const Text(
+                      'Convert',
+                      style: TextStyle(fontSize: 20),
                     ),
                   ),
                 ),
@@ -159,23 +177,30 @@ class _CurrencyConverterScreenState extends State<CurrencyConverterScreen> {
                   child: Container(
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF2C2C2C),
+                      color: AppColors.white,
                       borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.primary.withOpacity(0.1),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
                     ),
                     child: Column(
                       children: [
-                        const Text(
+                        Text(
                           'Result',
                           style: TextStyle(
-                            color: Colors.grey,
+                            color: AppColors.textSecondary,
                             fontSize: 16,
                           ),
                         ),
                         const SizedBox(height: 10),
                         Text(
                           '${_result.toStringAsFixed(2)} $_toCurrency',
-                          style: const TextStyle(
-                            color: Colors.white,
+                          style: TextStyle(
+                            color: AppColors.textPrimary,
                             fontSize: 32,
                             fontWeight: FontWeight.bold,
                           ),
@@ -192,13 +217,13 @@ class _CurrencyConverterScreenState extends State<CurrencyConverterScreen> {
     );
   }
 
-  Widget _buildCurrencyDropdown(
-      String value, void Function(String?) onChanged) {
+  Widget _buildCurrencyDropdown(String value, void Function(String?) onChanged) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 15),
       decoration: BoxDecoration(
-        color: const Color(0xFF3D3D3D),
+        color: AppColors.background,
         borderRadius: BorderRadius.circular(15),
+        border: Border.all(color: AppColors.secondary),
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(
@@ -208,13 +233,13 @@ class _CurrencyConverterScreenState extends State<CurrencyConverterScreen> {
               value: currency,
               child: Text(
                 currency,
-                style: const TextStyle(color: Colors.white),
+                style: TextStyle(color: AppColors.textPrimary),
               ),
             );
           }).toList(),
           onChanged: onChanged,
-          dropdownColor: const Color(0xFF3D3D3D),
-          style: const TextStyle(color: Colors.white),
+          dropdownColor: AppColors.white,
+          style: TextStyle(color: AppColors.textPrimary),
           isExpanded: true,
         ),
       ),

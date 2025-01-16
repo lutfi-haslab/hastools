@@ -31,7 +31,7 @@ Widget buildToolCard(BuildContext context, String title, String imagePath,
                 TextButton(
                   onPressed: () {
                     onTap();
-                    context.push(path);
+                    context.go(path);
                   },
                   style: TextButton.styleFrom(
                     backgroundColor: AppColors.accent,

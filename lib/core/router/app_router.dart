@@ -8,6 +8,7 @@ import 'package:hastools/features/profile/presentation/profile_screen.dart';
 import 'package:hastools/features/todos/presentation/screens/detail_todo_screen.dart';
 import 'package:hastools/features/tool/presentation/bloc/tool_bloc.dart';
 import 'package:hastools/features/tool/presentation/screens/calculator_screen.dart';
+import 'package:hastools/features/tool/presentation/screens/crypto_tools_screen.dart';
 import 'package:hastools/features/tool/presentation/screens/currency_converter_screen.dart';
 import 'package:hastools/features/tool/presentation/screens/keystore_screen.dart';
 import 'package:hastools/features/tool/presentation/screens/tools_screen.dart';
@@ -39,6 +40,30 @@ class ShellScaffold extends StatelessWidget {
 final GoRouter appRouter = GoRouter(
   initialLocation: '/',
   routes: <RouteBase>[
+    GoRoute(
+      path: '/tool/calculator',
+      builder: (BuildContext context, GoRouterState state) {
+        return const CalculatorScreen();
+      },
+    ),
+    GoRoute(
+      path: '/tool/currency-converter',
+      builder: (BuildContext context, GoRouterState state) {
+        return const CurrencyConverterScreen();
+      },
+    ),
+    GoRoute(
+      path: '/tool/crypto-tools',
+      builder: (BuildContext context, GoRouterState state) {
+        return const CryptoToolsScreen();
+      },
+    ),
+    GoRoute(
+      path: '/tool/keystore',
+      builder: (BuildContext context, GoRouterState state) {
+        return KeystoreScreen();
+      },
+    ),
     StatefulShellRoute.indexedStack(
       builder: (context, state, navigationShell) {
         return ShellScaffold(navigationShell: navigationShell);
@@ -55,17 +80,6 @@ final GoRouter appRouter = GoRouter(
                   child: const HomeScreen(),
                 );
               },
-              // routes: [
-              //   GoRoute(
-              //     path: 'todo',
-              //     builder: (BuildContext context, GoRouterState state) {
-              //       return BlocProvider(
-              //         create: (context) => getIt<TodoBloc>()..add(FetchTodos()),
-              //         child: TodoScreen(),
-              //       );
-              //     },
-              //   ),
-              // ],
             ),
           ],
         ),
@@ -80,6 +94,7 @@ final GoRouter appRouter = GoRouter(
                   child: const ToolsScreen(),
                 );
               },
+              routes: [],
             ),
           ],
         ),
@@ -105,39 +120,5 @@ final GoRouter appRouter = GoRouter(
         return const DetailTodoScreen();
       },
     ),
-    GoRoute(
-        path: '/tools',
-        builder: (BuildContext context, GoRouterState state) {
-          return BlocProvider(
-            create: (context) => getIt<ToolBloc>()..add(LoadTools()),
-            child: const ToolsScreen(),
-          );
-        },
-        routes: [
-          GoRoute(
-            path: '/calculator',
-            builder: (BuildContext context, GoRouterState state) {
-              return const CalculatorScreen();
-            },
-          ),
-          GoRoute(
-            path: '/currency-converter',
-            builder: (BuildContext context, GoRouterState state) {
-              return const CurrencyConverterScreen();
-            },
-          ),
-          GoRoute(
-            path: '/crypto-tools',
-            builder: (BuildContext context, GoRouterState state) {
-              return const CurrencyConverterScreen();
-            },
-          ),
-          GoRoute(
-            path: '/keystore',
-            builder: (BuildContext context, GoRouterState state) {
-              return KeystoreScreen();
-            },
-          ),
-        ]),
   ],
 );

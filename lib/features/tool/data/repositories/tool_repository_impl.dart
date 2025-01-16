@@ -11,25 +11,25 @@ class ToolRepository {
       name: 'Calculator',
       imageUrl: 'https://dummyimage.com/600x400/bdbdbd/ffffff.png',
       clickCount: 0,
-      path: "/tools/calculator",
+      path: "/tool/calculator",
     ),
     Tool(
       name: 'Currency Converter',
       imageUrl: 'https://dummyimage.com/600x400/bdbdbd/ffffff.png',
       clickCount: 0,
-      path: "/tools/currency-converter",
+      path: "/tool/currency-converter",
     ),
     Tool(
       name: 'Crypto Tools',
       imageUrl: 'https://dummyimage.com/600x400/bdbdbd/ffffff.png',
       clickCount: 0,
-      path: "/tools/crypto-tools",
+      path: "/tool/crypto-tools",
     ),
     Tool(
       name: 'Key Store',
       imageUrl: 'https://dummyimage.com/600x400/bdbdbd/ffffff.png',
       clickCount: 0,
-      path: "/tools/keystore",
+      path: "/tool/keystore",
     ),
   ];
 

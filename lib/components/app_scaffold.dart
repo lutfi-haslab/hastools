@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hastools/core/constants/color.dart';
 import 'package:network_logger/network_logger.dart';
 
@@ -58,9 +60,9 @@ class AppScaffold extends StatelessWidget {
   final Color? backgroundColor;
   final bool resizeToAvoidBottomInset;
   final bool withBottomNavigation;
-  // Add these new parameters
   final int? currentIndex;
   final Function(int)? onNavigate;
+  final bool backExit;
 
   const AppScaffold({
     super.key,
@@ -78,6 +80,7 @@ class AppScaffold extends StatelessWidget {
     this.withBottomNavigation = false,
     this.currentIndex,
     this.onNavigate,
+    this.backExit = false,
   });
 
   @override
@@ -103,54 +106,70 @@ class AppScaffold extends StatelessWidget {
       );
     }
 
-    content = NetworkLoggerWrapper(child: content);
-
-    return Scaffold(
-      backgroundColor: backgroundColor,
-      resizeToAvoidBottomInset: resizeToAvoidBottomInset,
-      appBar: title != null
-          ? AppBar(
-              title: Text(title!),
-              backgroundColor: Colors.white,
-              scrolledUnderElevation: 0.0,
-              leading: showBackButton
-                  ? IconButton(
-                      icon: const Icon(Icons.arrow_back),
-                      onPressed: () {
-                        if (onBack != null) {
-                          onBack!();
-                        } else {
-                          Navigator.of(context).pop();
-                        }
-                      },
-                    )
-                  : null,
-              actions: headerRight != null ? [headerRight!] : null,
-            )
-          : null,
-      body: SafeArea(child: content),
-      bottomNavigationBar: withBottomNavigation
-          ? BottomNavigationBar(
-              currentIndex: currentIndex ?? 0,
-              selectedItemColor: AppColors.primary,
-              unselectedItemColor: AppColors.textSecondary,
-              items: const [
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.home),
-                  label: 'Home',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.book),
-                  label: 'Todos',
-                ),
-                BottomNavigationBarItem(
-                  icon: Icon(Icons.person),
-                  label: 'Profile',
-                ),
-              ],
-              onTap: onNavigate,
-            )
-          : null,
+    return PopScope(
+      canPop: backExit,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) {
+          await SystemNavigator.pop(animated: true);
+          return;
+        }
+        if (onBack != null) {
+          onBack!();
+        } else if (Navigator.canPop(context)) {
+          Navigator.pop(context);
+        } else {
+          context.go('/');
+        }
+      },
+      child: Scaffold(
+        backgroundColor: backgroundColor,
+        resizeToAvoidBottomInset: resizeToAvoidBottomInset,
+        appBar: title != null
+            ? AppBar(
+                title: Text(title!),
+                backgroundColor: Colors.white,
+                scrolledUnderElevation: 0.0,
+                leading: showBackButton
+                    ? IconButton(
+                        icon: const Icon(Icons.arrow_back),
+                        onPressed: () {
+                          if (onBack != null) {
+                            onBack!();
+                          } else if (Navigator.canPop(context)) {
+                            Navigator.pop(context);
+                          } else {
+                            context.go('/');
+                          }
+                        },
+                      )
+                    : null,
+                actions: headerRight != null ? [headerRight!] : null,
+              )
+            : null,
+        body: SafeArea(child: content),
+        bottomNavigationBar: withBottomNavigation
+            ? BottomNavigationBar(
+                currentIndex: currentIndex ?? 0,
+                selectedItemColor: AppColors.accent,
+                unselectedItemColor: Colors.grey,
+                items: const [
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.home),
+                    label: 'Home',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.work),
+                    label: 'Tools',
+                  ),
+                  BottomNavigationBarItem(
+                    icon: Icon(Icons.person),
+                    label: 'Profile',
+                  ),
+                ],
+                onTap: onNavigate,
+              )
+            : null,
+      ),
     );
   }
 }
